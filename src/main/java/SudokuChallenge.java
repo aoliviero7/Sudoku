@@ -53,7 +53,7 @@ public class SudokuChallenge implements Serializable {
         return false;
     }
 
-    public boolean insertNumber(int number, int row, int column){
+    public boolean insertNumber(int number, int row, int column) {
         Integer[][] solvedSudoku = sudoku.getSolvedSudoku();
         if(solvedSudoku[row][column] == number){
             sudoku.insert(number, row, column);
@@ -63,7 +63,7 @@ public class SudokuChallenge implements Serializable {
         return false;
     }
 
-    public boolean checkNumber(int number, int row, int column){
+    public boolean checkNumber(int number, int row, int column) {
         Integer[][] rawSudoku = sudoku.getRawSudoku();
         if(rawSudoku[row][column] == number)
             return true;
