@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 import org.kohsuke.args4j.Option;
 
 public class Main {
@@ -11,5 +13,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Sudoku sudoku = new Sudoku("name");
         sudoku.generateSudoku();
+        HashMap<String, Integer> peerScore = new HashMap<String, Integer>();
+        Game.printSudoku(sudoku.getRawSudoku(), "gianfranco", peerScore);
     }
 }

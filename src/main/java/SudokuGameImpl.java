@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PeerBuilderDHT;
@@ -183,7 +182,7 @@ public class SudokuGameImpl implements SudokuGame{
         return null;
     }
     
-    private void sendMessage(String message, SudokuRoom sudokuRoom) {
+    public void sendMessage(String message, SudokuRoom sudokuRoom) {
         for (PeerAddress peerAddress : sudokuRoom.getGamePeers().keySet()) {
             if (_dht.peer().peerAddress() != peerAddress) {
                 FutureDirect futureDirect = _dht.peer().sendDirect(peerAddress).object(message).start();
