@@ -73,13 +73,4 @@ public class Sudoku implements Serializable{
         }
         return false;
     }
-
-    public boolean checkSudoku(){
-        for(int rows=0; rows<9; rows++)
-            for(int columns=0; columns<9; columns++)
-                if (!(rawSudoku[rows][columns].equals(solvedSudoku[rows][columns])))
-                    return false;
-
-        return true;
-    }
 }

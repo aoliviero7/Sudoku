@@ -70,4 +70,15 @@ public class SudokuRoom implements Serializable {
 
         return false;
     }
+
+    public boolean checkSudoku(){
+        Integer[][] rawSudoku = sudoku.getRawSudoku();
+        Integer[][] solvedSudoku = sudoku.getSolvedSudoku();
+        for(int rows=0; rows<9; rows++)
+            for(int columns=0; columns<9; columns++)
+                if (!(rawSudoku[rows][columns].equals(solvedSudoku[rows][columns])))
+                    return false;
+
+        return true;
+    }
 }

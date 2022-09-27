@@ -23,7 +23,7 @@ public class SudokuGameImpl implements SudokuGame{
 	final private int DEFAULT_MASTER_PORT=4000;
 	
 	private ArrayList<String> rooms = new ArrayList<String>();
-    private HashMap<PeerAddress, String> gamePeers = new HashMap<PeerAddress, String>();
+    private HashMap<PeerAddress, Player> gamePeers = new HashMap<PeerAddress, Player>();
     private HashMap<String, Integer> peerScore = new HashMap<String, Integer>();
 
 
@@ -122,8 +122,79 @@ public class SudokuGameImpl implements SudokuGame{
 
     @Override
     public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
-        // TODO Auto-generated method stub
+        try {
+            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+            futureGet.awaitUninterruptibly();
+            FutureGet score = _dht.get(Number160.createHash("peerScore")).start();
+            score.awaitUninterruptibly();
+
+            SudokuRoom sudokuRoom;
+            sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
+            if (futureGet.isSuccess() && !futureGet.isEmpty() && score.isSuccess()) {
+
+                //Checks if the number can be entered
+                if (sudokuRoom.insertNumber(_number, _i, _j)) {
+                    //update sudoku in DHT
+                    _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
+
+                    //Add +1 to user
+                    for (PeerAddress peerAddress : gamePeers.keySet())
+                        if (peerAddress.equals(peer.peerAddress())) {
+                            Player p = gamePeers.get(peerAddress);
+                            p.setScore(p.getScore()+1);
+                            gamePeers.put(peerAddress, p);
+                            sudokuRoom.getPeerScore().put(p.getNickname(), p.getScore());
+                            peerScore.put(p.getNickname(), p.getScore());
+                            //update score in DHT
+                            _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
+                            String message = "[" + _game_name + "] " + p.getNickname() + " insert number " + _number + " in position: (" + _i + "," + _j + ").";
+                            //sendMessage(message, sudokuChallenge);
+                        }
+                    //Checks if the game is finished
+                    if (sudokuRoom.checkSudoku()) {
+                        return 2;
+                    }
+                    else {
+                        return 1;
+                    }
+                } else if (sudokuRoom.checkNumber(_number, _i, _j)) { //Checks if the number has already been entered
+                    //Add +0 to user
+                    return 0;
+                } else { //the number is wrong
+                    //Remove -1 to user
+                    for (PeerAddress peerAddress : gamePeers.keySet())
+                        if (peerAddress.equals(peer.peerAddress())) {
+                            Player p = gamePeers.get(peerAddress);
+                            p.setScore(p.getScore()-1);
+                            gamePeers.put(peerAddress, p);
+                            sudokuRoom.getPeerScore().put(p.getNickname(), p.getScore());
+                            peerScore.put(p.getNickname(), p.getScore());
+                            //update score in DHT
+                            _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
+                        }
+                    return -1;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
     
+    private void sendMessage(String message, SudokuRoom sudokuRoom) {
+        for (PeerAddress peerAddress : sudokuRoom.getGamePeers().keySet()) {
+            if (_dht.peer().peerAddress() != peerAddress) {
+                FutureDirect futureDirect = _dht.peer().sendDirect(peerAddress).object(message).start();
+                futureDirect.awaitUninterruptibly();
+            }
+        }
+    }
+
+    public void addUser(Player player) throws IOException {
+        gamePeers.put(peer.peerAddress(), player);
+        _dht.put(Number160.createHash("usersInGame")).data(new Data(gamePeers)).start().awaitUninterruptibly();
+    }
+
 }
