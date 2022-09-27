@@ -3,7 +3,7 @@ import java.util.HashMap;
 
 import net.tomp2p.peers.PeerAddress;
 
-public class SudokuChallenge implements Serializable {
+public class SudokuRoom implements Serializable {
 
     private Sudoku sudoku;
     private String _game_name;
@@ -26,27 +26,27 @@ public class SudokuChallenge implements Serializable {
 		return this.peerScore;
 	}
 
-    public SudokuChallenge(String _game_name) throws Exception {
+    public SudokuRoom(String _game_name) throws Exception {
         this._game_name = _game_name;
         sudoku = new Sudoku(_game_name);
         sudoku.generateSudoku();
     }
 
-    public boolean addPeer(PeerAddress peerAddress, String name) {
+    public boolean addPeer(PeerAddress peerAddress, String nickname) {
         for(PeerAddress peer : gamePeers.keySet())
             if(peer.equals(peerAddress))
                 return false;
 
-        gamePeers.put(peerAddress, name);
-        peerScore.put(name, 0);
+        gamePeers.put(peerAddress, nickname);
+        peerScore.put(nickname, 0);
         return true;
     }
 
-    public boolean removePeer(PeerAddress peerAddress, String name) {
+    public boolean removePeer(PeerAddress peerAddress, String nickname) {
         for(PeerAddress peer : gamePeers.keySet())
             if(peer.equals(peerAddress)){
                 gamePeers.remove(peer);
-                peerScore.remove(name);
+                peerScore.remove(nickname);
                 return true;
             }
 
