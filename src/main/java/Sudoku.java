@@ -12,21 +12,37 @@ import org.json.simple.parser.ParseException;
 
 public class Sudoku implements Serializable{
     private String name;
-    private Integer[][] raw_sudoku;
-    private Integer[][] solved_sudoku;
+    private Integer[][] rawSudoku;
+    private Integer[][] solvedSudoku;
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer[][] getRawSudoku() {
+        return this.rawSudoku;
+    }
+
+    public Integer[][] getSolvedSudoku() {
+        return this.solvedSudoku;
+    }
 
     public Sudoku(String name) {
         this.name = name;
-        raw_sudoku = new Integer[9][9];
-        solved_sudoku = new Integer[9][9];
+        rawSudoku = new Integer[9][9];
+        solvedSudoku = new Integer[9][9];
     }
 
     public void generateSudoku() throws Exception{
         Random rand = new Random();
         int n = rand.nextInt(1);
 
-        readFromJSON(n, "SolvedSudoku", solved_sudoku);
-        readFromJSON(n, "RawSudoku", raw_sudoku);
+        readFromJSON(n, "SolvedSudoku", solvedSudoku);
+        readFromJSON(n, "RawSudoku", rawSudoku);
     }
 
     public void readFromJSON(int sudokuNumber, String sudokuType, Integer[][] sudoku) throws FileNotFoundException, IOException, ParseException{
@@ -48,5 +64,22 @@ public class Sudoku implements Serializable{
             }
             i++;
         }
+    }
+
+    public boolean insert(int number, int row, int column) {
+        if(rawSudoku[row][column]==0){
+            rawSudoku[row][column] = number;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkSudoku(){
+        for(int rows=0; rows<9; rows++)
+            for(int columns=0; columns<9; columns++)
+                if (!(rawSudoku[rows][columns].equals(solvedSudoku[rows][columns])))
+                    return false;
+
+        return true;
     }
 }
