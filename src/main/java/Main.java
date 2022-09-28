@@ -15,6 +15,6 @@ public class Main {
         sudoku.generateSudoku();
         HashMap<String, Integer> peerScore = new HashMap<String, Integer>();
         //Game.printSudoku(sudoku.getRawSudoku(), "gianfranco", peerScore);
-        Game.gameLoop();
+        //Game.gameLoop();
     }
 }
