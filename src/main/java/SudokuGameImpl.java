@@ -193,11 +193,10 @@ public class SudokuGameImpl implements SudokuGame{
 
     public void addUser(Player player) throws IOException {
         gamePeers.put(peer.peerAddress(), player);
-        _dht.put(Number160.createHash("usersInGame")).data(new Data(gamePeers)).start().awaitUninterruptibly();
+        _dht.put(Number160.createHash("gamePeers")).data(new Data(gamePeers)).start().awaitUninterruptibly();
     }
 
     public ArrayList<String> roomsActive() {
-
         try {
             FutureGet room = _dht.get(Number160.createHash("rooms")).start();
             room.awaitUninterruptibly();
@@ -216,4 +215,22 @@ public class SudokuGameImpl implements SudokuGame{
         return null;
     }
 
+    public HashMap<PeerAddress, Player> playersActive() {
+        try {
+            FutureGet players = _dht.get(Number160.createHash("gamePeers")).start();
+            players.awaitUninterruptibly();
+            if(players.isEmpty()) return null;
+            if (players.isSuccess()) {
+                if(players.isEmpty())
+                    return null;
+                
+                HashMap<PeerAddress, Player> result = (HashMap<PeerAddress, Player>) players.dataMap().values().iterator().next().object();
+                return result;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
