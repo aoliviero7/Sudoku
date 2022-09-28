@@ -151,10 +151,10 @@ public class SudokuGameImpl implements SudokuGame{
                         }
                     //Checks if the game is finished
                     if (sudokuRoom.checkSudoku()) {
-                        return 2;
+                        return 10;
                     }
                     else {
-                        return 1;
+                        return _number;
                     }
                 } else if (sudokuRoom.checkNumber(_number, _i, _j)) { //Checks if the number has already been entered
                     //Add +0 to user
@@ -194,6 +194,26 @@ public class SudokuGameImpl implements SudokuGame{
     public void addUser(Player player) throws IOException {
         gamePeers.put(peer.peerAddress(), player);
         _dht.put(Number160.createHash("usersInGame")).data(new Data(gamePeers)).start().awaitUninterruptibly();
+    }
+
+    public ArrayList<String> roomsActive() {
+
+        try {
+            FutureGet room = _dht.get(Number160.createHash("rooms")).start();
+            room.awaitUninterruptibly();
+            if(room.isEmpty()) return null;
+            if (room.isSuccess()) {
+                if(room.isEmpty())
+                    return null;
+                
+                ArrayList<String> result = (ArrayList<String>) room.dataMap().values().iterator().next().object();
+                return result;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }
