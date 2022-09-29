@@ -201,6 +201,39 @@ public class SudokuGameImpl implements SudokuGame{
         }
         return new ArrayList<String>();
     }
+
+    public ArrayList<String> roomsActiveByPlayer(Player player) {
+        try {
+            FutureGet rooms = _dht.get(Number160.createHash("rooms")).start();
+            rooms.awaitUninterruptibly();
+            if(rooms.isEmpty()) return new ArrayList<String>();
+            if (rooms.isSuccess()) {
+                if(rooms.isEmpty())
+                    return new ArrayList<String>();
+                ArrayList<String> result = (ArrayList<String>) rooms.dataMap().values().iterator().next().object();
+                ArrayList<String> result2 = new ArrayList<String>();
+                for(String r : result){
+                    FutureGet room = _dht.get(Number160.createHash(r)).start();
+                    room.awaitUninterruptibly();
+                    if(room.isEmpty()) return new ArrayList<String>();
+                    if (room.isSuccess()) {
+                        if(room.isEmpty())
+                            return new ArrayList<String>();
+                        SudokuRoom sudokuRoom = (SudokuRoom) room.dataMap().values().iterator().next().object();
+                        HashMap<PeerAddress, String> players = sudokuRoom.getGamePeers();
+                        for(PeerAddress peerAddress : players.keySet())
+                            if(players.get(peerAddress).equalsIgnoreCase(player.getNickname()))
+                                result2.add(r);
+                    }
+                }
+                return result2;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<String>();
+    }
+    
     public HashMap<PeerAddress, Player> playersActive() {
         try {
             FutureGet players = _dht.get(Number160.createHash("gamePeers")).start();

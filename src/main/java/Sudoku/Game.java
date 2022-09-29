@@ -121,11 +121,26 @@ public class Game {
                     System.out.println("  ========================");
                     System.out.println("  Show sudoku of active game");
                     System.out.println("  ========================");
+                    /* 
+                    ArrayList<String> roomsPlayer = peer.roomsActiveByPlayer(player);
+                    int sizePlayerRooms = roomsPlayer.size();
+                    if(sizePlayerRooms>0){
+                        System.out.println("Game rooms currently active: " + sizePlayerRooms + ".");
+                        int i = 0;
+                        for(String room : roomsPlayer)
+                            System.out.println("[" + i++ + "]. " + room);
+                    } else {
+                        System.out.println("You are not part of any game room. Try creating a new one or joining an existing one.");
+                        break;
+                    }
+                    */
+                    
                     if(gameFlag && !_game_name.equals(""))
                         printSudoku(peer.getSudoku(_game_name), _game_name, peerScore);
                     else 
                         System.out.println("You are not part of any game room. Try creating a new one or joining an existing one.");
                     break;
+                    
                 case 4:
                     System.out.println("  ========================");
                     System.out.println("   Insert a number");
