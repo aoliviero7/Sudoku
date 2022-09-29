@@ -20,7 +20,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Main main = new Main();
         final CmdLineParser parser = new CmdLineParser(main);
-        //parser.parseArgument(args);
+        parser.parseArgument(args);
         System.out.println("  ========================");
         System.out.println("      SUDOKU P2P GAME");
         System.out.println("  ========================");
