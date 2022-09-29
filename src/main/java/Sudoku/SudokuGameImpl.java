@@ -128,7 +128,9 @@ public class SudokuGameImpl implements SudokuGame{
             SudokuRoom sudokuRoom;
             sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             if (futureGet.isSuccess() && !futureGet.isEmpty() && score.isSuccess()) {
-                if (sudokuRoom.insertNumber(_number, _i, _j)) {
+                if (sudokuRoom.checkNumber(_number, _i, _j)) 
+                    return 0;
+                else if (sudokuRoom.insertNumber(_number, _i, _j)) {
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
 
                     for (PeerAddress peerAddress : gamePeers.keySet())
@@ -148,8 +150,6 @@ public class SudokuGameImpl implements SudokuGame{
                     else {
                         return _number;
                     }
-                } else if (sudokuRoom.checkNumber(_number, _i, _j)) { 
-                    return 0;
                 } else { 
                     for (PeerAddress peerAddress : gamePeers.keySet())
                         if (peerAddress.equals(peer.peerAddress())) {
