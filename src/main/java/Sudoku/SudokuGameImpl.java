@@ -41,7 +41,6 @@ public class SudokuGameImpl implements SudokuGame{
 			throw new Exception("Error in master peer bootstrap.");
 		}
 		peer.objectDataReply(new ObjectDataReply() {
-			
 			public Object reply(PeerAddress sender, Object request) throws Exception {
 				return _listener.parseMessage(request);
 			}
@@ -173,6 +172,7 @@ public class SudokuGameImpl implements SudokuGame{
     
     public void sendMessage(String message, SudokuRoom sudokuRoom) {
         for (PeerAddress peerAddress : sudokuRoom.getGamePeers().keySet()) {
+            System.out.println(peerAddress);
             if (_dht.peer().peerAddress() != peerAddress) {
                 FutureDirect futureDirect = _dht.peer().sendDirect(peerAddress).object(message).start();
                 futureDirect.awaitUninterruptibly();
