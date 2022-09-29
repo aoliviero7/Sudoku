@@ -40,7 +40,7 @@ public class Sudoku implements Serializable{
 
     public void generateSudoku() throws Exception{
         Random rand = new Random();
-        int n = rand.nextInt(1);
+        int n = rand.nextInt(1); //aggiornare a 27
 
         readFromJSON(n, "SolvedSudoku", solvedSudoku);
         readFromJSON(n, "RawSudoku", rawSudoku);
@@ -49,7 +49,7 @@ public class Sudoku implements Serializable{
     public void readFromJSON(int sudokuNumber, String sudokuType, Integer[][] sudoku) throws FileNotFoundException, IOException, ParseException{
         int i = 0, riga = 0, colonna = 0;
 
-        Object obj = new JSONParser().parse(new FileReader("sudoku.json"));
+        Object obj = new JSONParser().parse(new FileReader("app/sudoku.json"));
         JSONObject jo = (JSONObject) obj;
         JSONArray ja = (JSONArray) jo.get(sudokuType);
        
