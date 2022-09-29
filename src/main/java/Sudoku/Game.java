@@ -167,7 +167,7 @@ public class Game {
                     }
                     int result = peer.placeNumber(_game_name, row, column, number);
                     if(result == number)
-                        System.out.println("[" + _game_name + "] Number: " + number + " iserted successfully in position: (" + row + "," + column + ").");
+                        System.out.println("[" + _game_name + "] Number: " + number + " inserted successfully in position: (" + row + "," + column + ").");
                     else if(result == 0)
                         System.out.println("[" + _game_name + "] Number: " + number + " has already been entered in position: (" + row + "," + column + ").");
                     else if(result == 10)

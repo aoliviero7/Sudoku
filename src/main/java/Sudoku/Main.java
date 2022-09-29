@@ -1,6 +1,7 @@
 package Sudoku;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -19,7 +20,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Main main = new Main();
         final CmdLineParser parser = new CmdLineParser(main);
-        parser.parseArgument(args);
+        //parser.parseArgument(args);
         System.out.println("  ========================");
         System.out.println("      SUDOKU P2P GAME");
         System.out.println("  ========================");
@@ -45,13 +46,5 @@ public class Main {
         peer.addUser(player);
         Game game = new Game(peer, id, player);
         game.gameLoop();
-
-
-
-        //Sudoku sudoku = new Sudoku("name");
-        //sudoku.generateSudoku();
-        //HashMap<String, Integer> peerScore = new HashMap<String, Integer>();
-        //Game.printSudoku(sudoku.getRawSudoku(), "gianfranco", peerScore);
-        //Game.gameLoop();
     }
 }

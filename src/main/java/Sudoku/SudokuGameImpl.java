@@ -30,11 +30,9 @@ public class SudokuGameImpl implements SudokuGame{
     private HashMap<String, Integer> peerScore = new HashMap<String, Integer>();
 
 
-	public SudokuGameImpl( int _id, String _master_peer, final MessageListener _listener) throws Exception
-	{
+	public SudokuGameImpl( int _id, String _master_peer, final MessageListener _listener) throws Exception {
 		 peer= new PeerBuilder(Number160.createHash(_id)).ports(DEFAULT_MASTER_PORT+_id).start();
 		_dht = new PeerBuilderDHT(peer).start();	
-		
 		FutureBootstrap fb = peer.bootstrap().inetAddress(InetAddress.getByName(_master_peer)).ports(DEFAULT_MASTER_PORT).start();
 		fb.awaitUninterruptibly();
 		if(fb.isSuccess()) {
@@ -42,7 +40,6 @@ public class SudokuGameImpl implements SudokuGame{
 		}else {
 			throw new Exception("Error in master peer bootstrap.");
 		}
-		
 		peer.objectDataReply(new ObjectDataReply() {
 			
 			public Object reply(PeerAddress sender, Object request) throws Exception {
@@ -56,13 +53,11 @@ public class SudokuGameImpl implements SudokuGame{
         if(rooms.contains(_game_name))
             return null;
         rooms.add(_game_name);
-
         try{
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
             FutureGet room = _dht.get(Number160.MAX_VALUE.createHash("rooms")).start();
             room.awaitUninterruptibly();
-
             if (futureGet.isSuccess() && futureGet.isEmpty()) {
                 SudokuRoom sudokuRoom = new SudokuRoom(_game_name);
                 _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
@@ -82,17 +77,14 @@ public class SudokuGameImpl implements SudokuGame{
             futureGet.awaitUninterruptibly();
             if (futureGet.isSuccess()) {
                 if (futureGet.isEmpty()) return false;
-
                 SudokuRoom sudokuRoom;
                 sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
-
                 if (sudokuRoom.addPeer(_dht.peer().peerAddress(), _nickname)) {
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
                     String message = "[" + _game_name + "] " + _nickname + " joined.";
-                    //sendMessage(message, sudokuChallenge);
+                    sendMessage(message, sudokuRoom);
                     return true;
                 }
-
                 return false;
             }
         } catch (Exception e) {
@@ -106,24 +98,26 @@ public class SudokuGameImpl implements SudokuGame{
         try {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
-
             if (futureGet.isSuccess()) {
                 if (futureGet.isEmpty()) 
                     return null;
-
                 SudokuRoom sudokuRoom;
                 sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
-
                 return sudokuRoom.getSudoku().getRawSudoku();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
-    @Override
+    @Override 
+    /*
+        return: - number, if it's correctly placed
+                - 0, if the number has already been entered
+                - -1, if the number is wrong
+                - 10, if the number makes you win the game 
+    */
     public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
         try {
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
@@ -134,13 +128,9 @@ public class SudokuGameImpl implements SudokuGame{
             SudokuRoom sudokuRoom;
             sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             if (futureGet.isSuccess() && !futureGet.isEmpty() && score.isSuccess()) {
-
-                //Checks if the number can be entered
                 if (sudokuRoom.insertNumber(_number, _i, _j)) {
-                    //update sudoku in DHT
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
 
-                    //Add +1 to user
                     for (PeerAddress peerAddress : gamePeers.keySet())
                         if (peerAddress.equals(peer.peerAddress())) {
                             Player p = gamePeers.get(peerAddress);
@@ -148,23 +138,19 @@ public class SudokuGameImpl implements SudokuGame{
                             gamePeers.put(peerAddress, p);
                             sudokuRoom.getPeerScore().put(p.getNickname(), p.getScore());
                             peerScore.put(p.getNickname(), p.getScore());
-                            //update score in DHT
                             _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
                             String message = "[" + _game_name + "] " + p.getNickname() + " insert number " + _number + " in position: (" + _i + "," + _j + ").";
-                            //sendMessage(message, sudokuChallenge);
+                            sendMessage(message, sudokuRoom);
                         }
-                    //Checks if the game is finished
                     if (sudokuRoom.checkSudoku()) {
                         return 10;
                     }
                     else {
                         return _number;
                     }
-                } else if (sudokuRoom.checkNumber(_number, _i, _j)) { //Checks if the number has already been entered
-                    //Add +0 to user
+                } else if (sudokuRoom.checkNumber(_number, _i, _j)) { 
                     return 0;
-                } else { //the number is wrong
-                    //Remove -1 to user
+                } else { 
                     for (PeerAddress peerAddress : gamePeers.keySet())
                         if (peerAddress.equals(peer.peerAddress())) {
                             Player p = gamePeers.get(peerAddress);
@@ -172,7 +158,6 @@ public class SudokuGameImpl implements SudokuGame{
                             gamePeers.put(peerAddress, p);
                             sudokuRoom.getPeerScore().put(p.getNickname(), p.getScore());
                             peerScore.put(p.getNickname(), p.getScore());
-                            //update score in DHT
                             _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
                         }
                     return -1;
@@ -204,37 +189,32 @@ public class SudokuGameImpl implements SudokuGame{
         try {
             FutureGet room = _dht.get(Number160.createHash("rooms")).start();
             room.awaitUninterruptibly();
-            if(room.isEmpty()) return null;
+            if(room.isEmpty()) return new ArrayList<String>();
             if (room.isSuccess()) {
                 if(room.isEmpty())
-                    return null;
-                
+                    return new ArrayList<String>();
                 ArrayList<String> result = (ArrayList<String>) room.dataMap().values().iterator().next().object();
                 return result;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return null;
+        return new ArrayList<String>();
     }
-
     public HashMap<PeerAddress, Player> playersActive() {
         try {
             FutureGet players = _dht.get(Number160.createHash("gamePeers")).start();
             players.awaitUninterruptibly();
-            if(players.isEmpty()) return null;
+            if(players.isEmpty()) return new HashMap<PeerAddress, Player>();
             if (players.isSuccess()) {
                 if(players.isEmpty())
-                    return null;
-                
+                    return new HashMap<PeerAddress, Player>();
                 HashMap<PeerAddress, Player> result = (HashMap<PeerAddress, Player>) players.dataMap().values().iterator().next().object();
                 return result;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return null;
+        return new HashMap<PeerAddress, Player>();
     }
 }
