@@ -1,6 +1,8 @@
+package Sudoku;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import Class.Sudoku;
 import net.tomp2p.peers.PeerAddress;
 
 public class SudokuRoom implements Serializable {

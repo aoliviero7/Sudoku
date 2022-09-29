@@ -1,9 +1,11 @@
+package Sudoku;
 import java.util.HashMap;
 import java.util.Scanner;
 
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+import Class.Player;
 import net.tomp2p.peers.PeerAddress;
 
 public class Main {

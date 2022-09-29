@@ -1,8 +1,12 @@
+package Sudoku;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Class.Player;
+import Interface.MessageListener;
+import Interface.SudokuGame;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;

@@ -1,3 +1,4 @@
+package Class;
 
 import java.io.Serializable;
 

@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>it.unisa.p2p</groupId>
+	<groupId>Sudoku</groupId>
 	<artifactId>sudoku</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
@@ -103,7 +103,7 @@
 							<archive>
 								<manifest>
 									<mainClass>
-										it.unisa.p2p.App
+										Sudoku.Main
 									</mainClass>
 								</manifest>
 							</archive>

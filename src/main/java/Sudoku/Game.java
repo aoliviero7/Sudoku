@@ -1,6 +1,9 @@
+package Sudoku;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+
+import Class.Player;
 
 public class Game {
     private ArrayList<String> rooms;

@@ -1,3 +1,6 @@
+package Sudoku;
+import Interface.MessageListener;
+
 public class MessageListenerImpl implements MessageListener {
 
     private int peerID;
