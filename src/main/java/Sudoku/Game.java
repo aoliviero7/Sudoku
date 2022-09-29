@@ -77,6 +77,10 @@ public class Game {
                     System.out.println("  ========================");
                     rooms = peer.roomsActive();
                     _game_name="";
+                    if(gameFlag){
+                        System.out.println("You are already in a room");
+                        break;
+                    }
                     while(true){
                         System.out.println("Enter the name of the new game: ");
                         _game_name= scanner.next();
@@ -97,6 +101,10 @@ public class Game {
                     System.out.println("  ========================");
                     System.out.println("   Join in a game room");
                     System.out.println("  ========================");
+                    if(gameFlag){
+                        System.out.println("You are already in a room");
+                        break;
+                    }
                     rooms = peer.roomsActive();
                     int size = rooms.size();
                     if(size>0){
@@ -134,8 +142,7 @@ public class Game {
                         break;
                     }
                     */
-                    
-                    if(gameFlag && !_game_name.equals(""))
+                    if(gameFlag /*&& !_game_name.equals("")*/)
                         printSudoku(peer.getSudoku(_game_name), _game_name, peerScore);
                     else 
                         System.out.println("You are not part of any game room. Try creating a new one or joining an existing one.");
@@ -197,7 +204,9 @@ public class Game {
                     playerInfo(player, peerID);
                     break;
                 case 6:
-                    System.out.println("Exit");
+                    if(peer.exit(player, _game_name, gameFlag))
+                        System.exit(0);
+                    System.out.println("An error occurred while exiting the game.");
                     break;
                 default: break;
             }

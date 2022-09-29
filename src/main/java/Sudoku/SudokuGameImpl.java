@@ -250,4 +250,29 @@ public class SudokuGameImpl implements SudokuGame{
         }
         return new HashMap<PeerAddress, Player>();
     }
+
+    public boolean exit(Player player, String _game_name, boolean gameFlag) {
+        if (gameFlag) {
+            try {
+                FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+                futureGet.awaitUninterruptibly();
+                if (futureGet.isSuccess())
+                    if (futureGet.isEmpty()) return false;
+                SudokuRoom sudokuRoom;
+                sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
+                if (sudokuRoom.removePeer(_dht.peer().peerAddress(), player.getNickname())) {
+                    String message = "[" + _game_name + "] " + player.getNickname() + " exited.";
+                    sendMessage(message, sudokuRoom);
+                    _dht.peer().announceShutdown().start().awaitUninterruptibly();
+                    return true;
+                }
+                return false;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        _dht.peer().announceShutdown().start().awaitUninterruptibly();
+
+        return false;
+    }
 }
