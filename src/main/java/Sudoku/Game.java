@@ -1,4 +1,5 @@
 package Sudoku;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -8,14 +9,14 @@ import Class.Player;
 public class Game {
     private ArrayList<String> rooms;
     private Player player;
-    private SudokuGameImpl peer;
+    private SudokuGameImpl sudokuGameImpl;
     private int peerID;
     private boolean gameFlag = false;
     private String _game_name="";
     private HashMap<String, Integer> peerScore= new HashMap<String,Integer>();
 
-    public Game(SudokuGameImpl peer, int peerID, Player player) {
-        this.peer = peer;
+    public Game(SudokuGameImpl sudokuGameImpl, int peerID, Player player) {
+        this.sudokuGameImpl = sudokuGameImpl;
         this.peerID = peerID;
         this.player = player;
     }
@@ -56,7 +57,7 @@ public class Game {
         System.out.println("[" + peerID + "] Nickname: " + player.getNickname() + " - Score: " + player.getScore() + ".");
     }
 
-    public void gameLoop() {
+    public void gameLoop() throws IOException {
         while(true){
             printMenu();
             Scanner scanner= new Scanner(System.in);
@@ -75,7 +76,7 @@ public class Game {
                     System.out.println("  ========================");
                     System.out.println("   Start new game");
                     System.out.println("  ========================");
-                    rooms = peer.roomsActive();
+                    rooms = sudokuGameImpl.roomsActive();
                     _game_name="";
                     if(gameFlag){
                         System.out.println("You are already in a room");
@@ -89,8 +90,8 @@ public class Game {
                         else
                             break;
                     }
-                    Integer [][] sudoku = peer.generateNewSudoku(_game_name);
-                    if(sudoku == null)
+                    Integer [][] sudoku = sudokuGameImpl.generateNewSudoku(_game_name);
+                    if(sudoku == null || !sudokuGameImpl.addCreator(player, _game_name))
                         System.out.println("An error occurred while creating the game.");
                     else{
                         System.out.println("Sudoku game room [" + _game_name + "] created successfully.");
@@ -105,7 +106,7 @@ public class Game {
                         System.out.println("You are already in a room");
                         break;
                     }
-                    rooms = peer.roomsActive();
+                    rooms = sudokuGameImpl.roomsActive();
                     int size = rooms.size();
                     if(size>0){
                         System.out.println("Game rooms currently active: " + size + ".");
@@ -119,7 +120,7 @@ public class Game {
                     System.out.println("Enter the name of the game room you want to join.");
                     _game_name = "";
                     _game_name = scanner.next();
-                    gameFlag = peer.join(_game_name, player.getNickname());
+                    gameFlag = sudokuGameImpl.join(_game_name, player.getNickname());
                     if(gameFlag)
                         System.out.println("[" + _game_name + "] " + player.getNickname() + " joined.");
                     else    
@@ -143,7 +144,7 @@ public class Game {
                     }
                     */
                     if(gameFlag /*&& !_game_name.equals("")*/)
-                        printSudoku(peer.getSudoku(_game_name), _game_name, peerScore);
+                        printSudoku(sudokuGameImpl.getSudoku(_game_name), _game_name, peerScore);
                     else 
                         System.out.println("You are not part of any game room. Try creating a new one or joining an existing one.");
                     break;
@@ -187,7 +188,7 @@ public class Game {
                         if(column < 0 || column >8)
                             System.out.println("Input wrong. Insert a number between 0 and 8.");
                     }
-                    int result = peer.placeNumber(_game_name, row, column, number);
+                    int result = sudokuGameImpl.placeNumber(_game_name, row, column, number);
                     if(result == number)
                         System.out.println("[" + _game_name + "] Number: " + number + " inserted successfully in position: (" + row + "," + column + ").");
                     else if(result == 0)
@@ -204,7 +205,7 @@ public class Game {
                     playerInfo(player, peerID);
                     break;
                 case 6:
-                    if(peer.exit(player, _game_name, gameFlag))
+                    if(sudokuGameImpl.exit(player, _game_name, gameFlag))
                         System.exit(0);
                     System.out.println("An error occurred while exiting the game.");
                     break;

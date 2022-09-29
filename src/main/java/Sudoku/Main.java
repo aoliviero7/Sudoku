@@ -24,8 +24,8 @@ public class Main {
         System.out.println("  ========================");
         System.out.println("      SUDOKU P2P GAME");
         System.out.println("  ========================");
-        SudokuGameImpl peer = new SudokuGameImpl(id, master, new MessageListenerImpl(id));
-        HashMap<PeerAddress, Player> players = peer.playersActive();
+        SudokuGameImpl sudokuGameImpl = new SudokuGameImpl(id, master, new MessageListenerImpl(id));
+        HashMap<PeerAddress, Player> players = sudokuGameImpl.playersActive();
         Scanner scanner = new Scanner(System.in);
         String nickname = "";
         boolean nicknameFlag = false;
@@ -43,8 +43,8 @@ public class Main {
                 break;
         }
         Player player = new Player(nickname);
-        peer.addUser(player);
-        Game game = new Game(peer, id, player);
+        sudokuGameImpl.addPlayer(player);
+        Game game = new Game(sudokuGameImpl, id, player);
         game.gameLoop();
     }
 }

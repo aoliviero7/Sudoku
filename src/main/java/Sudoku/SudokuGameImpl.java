@@ -172,7 +172,7 @@ public class SudokuGameImpl implements SudokuGame{
     
     public void sendMessage(String message, SudokuRoom sudokuRoom) {
         for (PeerAddress peerAddress : sudokuRoom.getGamePeers().keySet()) {
-            System.out.println(peerAddress);
+            //System.out.println(peerAddress);
             if (_dht.peer().peerAddress() != peerAddress) {
                 FutureDirect futureDirect = _dht.peer().sendDirect(peerAddress).object(message).start();
                 futureDirect.awaitUninterruptibly();
@@ -180,9 +180,29 @@ public class SudokuGameImpl implements SudokuGame{
         }
     }
 
-    public void addUser(Player player) throws IOException {
+    public void addPlayer(Player player) throws IOException {
         gamePeers.put(peer.peerAddress(), player);
         _dht.put(Number160.createHash("gamePeers")).data(new Data(gamePeers)).start().awaitUninterruptibly();
+    }
+
+    public boolean addCreator(Player player, String _game_name) throws IOException {
+        try {
+            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+            futureGet.awaitUninterruptibly();
+            if (futureGet.isSuccess()) {
+                if (futureGet.isEmpty()) return false;
+                SudokuRoom sudokuRoom;
+                sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
+                if (sudokuRoom.addPeer(_dht.peer().peerAddress(), player.getNickname())) {
+                    _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
+                    return true;
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public ArrayList<String> roomsActive() {
