@@ -37,8 +37,10 @@ public class Main {
                     nicknameFlag = true;
                     break;
                 }
-            if(nicknameFlag)
+            if(nicknameFlag){
                 System.out.println("Nickname has already been taken. Try another one:"); 
+                nicknameFlag = false;
+            }
             else
                 break;
         }

@@ -205,8 +205,14 @@ public class Game {
                     playerInfo(player, peerID);
                     break;
                 case 6:
-                    if(sudokuGameImpl.exit(player, _game_name, gameFlag))
+                    if(!gameFlag){
+                        System.out.println("You are not part of any game room.");
+                        break;
+                    }
+                    if(sudokuGameImpl.exit(player, _game_name, gameFlag)){
+                        gameFlag=false;
                         System.exit(0);
+                    }
                     System.out.println("An error occurred while exiting the game.");
                     break;
                 default: break;
