@@ -193,8 +193,11 @@ public class Game {
                         System.out.println("[" + _game_name + "] Number: " + number + " inserted successfully in position: (" + row + "," + column + ").");
                     else if(result == 0)
                         System.out.println("[" + _game_name + "] Number: " + number + " has already been entered in position: (" + row + "," + column + ").");
-                    else if(result == 10)
-                        System.out.println("[" + _game_name + "] You win.");
+                    else if(result == 10){
+                        System.out.println("[" + _game_name + "] Game over.");
+                        _game_name = "";
+                        gameFlag = false;
+                    }
                     else 
                         System.out.println("[" + _game_name + "] Number: " + number + " incorrect.");
                     break;

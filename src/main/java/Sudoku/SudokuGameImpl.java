@@ -115,7 +115,7 @@ public class SudokuGameImpl implements SudokuGame{
         return: - number, if it's correctly placed
                 - 0, if the number has already been entered
                 - -1, if the number is wrong
-                - 10, if the number makes you win the game 
+                - 10, if the number makes you complete the game 
     */
     public Integer placeNumber(String _game_name, int _i, int _j, int _number) {
         try {
@@ -140,10 +140,13 @@ public class SudokuGameImpl implements SudokuGame{
                             sudokuRoom.getPeerScore().put(p.getNickname(), p.getScore());
                             peerScore.put(p.getNickname(), p.getScore());
                             _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
-                            String message = "[" + _game_name + "] " + p.getNickname() + " insert number " + _number + " in position: (" + _i + "," + _j + ").";
+                            String message = "[" + _game_name + "] " + p.getNickname() + " insert number " + _number + " in position: (" + _i + "," + _j + "). (Score = " + p.getScore() + ")";
                             sendMessage(message, sudokuRoom);
                         }
                     if (sudokuRoom.checkSudoku()) {
+                        String winner = getWinner();
+                        String message = "[" + _game_name + "] Congratulation " + winner + ", you win!";
+                        sendMessage(message, sudokuRoom);
                         return 10;
                     }
                     else {
@@ -158,6 +161,8 @@ public class SudokuGameImpl implements SudokuGame{
                             sudokuRoom.getPeerScore().put(p.getNickname(), p.getScore());
                             peerScore.put(p.getNickname(), p.getScore());
                             _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
+                            String message = "[" + _game_name + "] " + p.getNickname() + " insert wrong number in position: (" + _i + "," + _j + "). (Score = " + p.getScore() + ")";
+                            sendMessage(message, sudokuRoom);
                         }
                     return -1;
                 }
@@ -294,5 +299,34 @@ public class SudokuGameImpl implements SudokuGame{
         _dht.peer().announceShutdown().start().awaitUninterruptibly();
 
         return false;
+    }
+
+    public String getWinner() {
+        int max = 0;
+        String result = "";
+        try {
+            FutureGet score = _dht.get(Number160.createHash("peerScore")).start();
+            score.awaitUninterruptibly();
+            if(score.isEmpty()) return null;
+            if (score.isSuccess()) {
+                if(score.isEmpty())
+                    return null;
+                HashMap<String, Integer> peerScore = (HashMap<String, Integer>) score.dataMap().values().iterator().next().object();
+                for(String p : peerScore.keySet()){
+                    if(peerScore.get(p)>max){
+                        max = peerScore.get(p);
+                        result = p;
+                    }
+                    peerScore.remove(p);
+                }
+                if(!result.equals(""))
+                    return result;
+                else
+                    return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

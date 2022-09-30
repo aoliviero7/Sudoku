@@ -12,6 +12,11 @@ public class Player implements Serializable {
         this.score = 0;
     }
 
+    public Player(){
+        this.nickname = "";
+        this.score = 0;
+    }
+
     public String getNickname(){
         return nickname;
     }
