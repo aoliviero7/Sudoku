@@ -387,7 +387,7 @@ public class SudokuGameImpl implements SudokuGame{
             sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
             for (PeerAddress pa : gamePeers.keySet())
-                System.out.println("gamePeers - " + gamePeers.get(pa));
+                System.out.println("gamePeers - " + gamePeers.get(pa).getNickname());
             for (PeerAddress pa : peers.keySet())
                 System.out.println("peers - " + peers.get(pa));
             for (PeerAddress peerAddress : peers.keySet()){
@@ -405,7 +405,7 @@ public class SudokuGameImpl implements SudokuGame{
             ArrayList<String> rooms = (ArrayList<String>) room.dataMap().values().iterator().next().object();
             System.out.println("rooms.remove = " + rooms.remove(_game_name));
             _dht.put(Number160.createHash("rooms")).data(new Data(rooms)).start().awaitUninterruptibly();
-            
+            return true;
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
