@@ -144,7 +144,7 @@ public class SudokuGameImpl implements SudokuGame{
                             sendMessage(message, sudokuRoom);
                         }
                     if (sudokuRoom.checkSudoku()) {
-                        String winner = getWinner();
+                        String winner = getWinner(_game_name);
                         String message = "[" + _game_name + "] Congratulation " + winner + ", you win!";
                         sendMessage(message, sudokuRoom);
                         return 10;
@@ -286,6 +286,14 @@ public class SudokuGameImpl implements SudokuGame{
                 SudokuRoom sudokuRoom;
                 sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
                 if (sudokuRoom.removePeer(_dht.peer().peerAddress(), player.getNickname())) {
+                    for (PeerAddress peerAddress : gamePeers.keySet())
+                        if (peerAddress.equals(peer.peerAddress())) {
+                            player.setScore(0);
+                            gamePeers.put(peerAddress, player);
+                            sudokuRoom.getPeerScore().put(player.getNickname(), 0);
+                            peerScore.put(player.getNickname(), 0);
+                            _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
+                        }
                     String message = "[" + _game_name + "] " + player.getNickname() + " exited.";
                     sendMessage(message, sudokuRoom);
                     _dht.peer().announceShutdown().start().awaitUninterruptibly();
@@ -301,7 +309,7 @@ public class SudokuGameImpl implements SudokuGame{
         return false;
     }
 
-    public String getWinner() {
+    /*public String getWinner(String _game_name) {
         int max = 0;
         String result = "";
         try {
@@ -318,6 +326,53 @@ public class SudokuGameImpl implements SudokuGame{
                         result = p;
                     }
                     peerScore.remove(p);
+                }
+                if(!result.equals(""))
+                    return result;
+                else
+                    return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }*/
+
+    public String getWinner(String _game_name) {
+        int max = 0;
+        String result = "";
+        try {
+            FutureGet score = _dht.get(Number160.createHash("peerScore")).start();
+            score.awaitUninterruptibly();
+            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+            futureGet.awaitUninterruptibly();
+            if (futureGet.isSuccess())
+                if (futureGet.isEmpty()) return null;
+            SudokuRoom sudokuRoom;
+            sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
+            if(score.isEmpty()) return null;
+            if (score.isSuccess()) {
+                if(score.isEmpty())
+                    return null;
+                HashMap<String, Integer> peerScore = (HashMap<String, Integer>) score.dataMap().values().iterator().next().object();
+                for(String p : peerScore.keySet()){
+                    if(peerScore.get(p)>max){
+                        max = peerScore.get(p);
+                        result = p;
+                    }
+                    //peerScore.remove(p);
+                    if (sudokuRoom.removePeer(_dht.peer().peerAddress(), p)) {
+                        for (PeerAddress peerAddress : gamePeers.keySet())
+                            if (peerAddress.equals(peer.peerAddress())) {
+                                Player player = gamePeers.get(peerAddress);
+                                player.setScore(0);
+                                gamePeers.put(peerAddress, player);
+                                sudokuRoom.getPeerScore().put(player.getNickname(), 0);
+                                peerScore.put(player.getNickname(), 0);
+                                _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
+                            }
+                        _dht.peer().announceShutdown().start().awaitUninterruptibly();
+                    }
                 }
                 if(!result.equals(""))
                     return result;
