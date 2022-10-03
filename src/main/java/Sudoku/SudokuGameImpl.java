@@ -382,12 +382,12 @@ public class SudokuGameImpl implements SudokuGame{
             room.awaitUninterruptibly();
             if (futureGet.isSuccess())
                 if (futureGet.isEmpty()) return false;
-                System.out.println("aaa");
+            System.out.println("aaa");
             SudokuRoom sudokuRoom;
             sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
             for (PeerAddress peerAddress : peers.keySet()){
-                System.out.println("for");
+                System.out.println("for " + peers.get(peerAddress));
                 Player player = gamePeers.get(peerAddress);
                 player.setScore(0);
                 gamePeers.put(peerAddress, player);
