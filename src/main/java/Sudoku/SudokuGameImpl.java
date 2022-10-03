@@ -390,13 +390,13 @@ public class SudokuGameImpl implements SudokuGame{
             room.awaitUninterruptibly();
             System.out.println("aaa");
             HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
-            for (PeerAddress pa : gamePeers.keySet())
+            /*for (PeerAddress pa : gamePeers.keySet())
                 System.out.println("gamePeers - " + gamePeers.get(pa).getNickname());
             for (PeerAddress pa : peers.keySet())
-                System.out.println("peers - " + peers.get(pa));
+                System.out.println("peers - " + peers.get(pa));*/
             for (PeerAddress peerAddress : peers.keySet()){
                 System.out.println("for " + peers.get(peerAddress));
-                Player player = gamePeers.get(peerAddress);
+                Player player = new Player(peers.get(peerAddress));
                 player.setScore(0);
                 gamePeers.put(peerAddress, player);
                 peerScore.put(player.getNickname(), 0);
