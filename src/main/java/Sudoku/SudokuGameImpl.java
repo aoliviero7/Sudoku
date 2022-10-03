@@ -356,16 +356,23 @@ public class SudokuGameImpl implements SudokuGame{
             if (score.isSuccess()) {
                 if(score.isEmpty())
                     return null;
+                FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+                futureGet.awaitUninterruptibly();
+                if (futureGet.isSuccess())
+                    if (futureGet.isEmpty()) return null;
+                SudokuRoom sudokuRoom;
+                sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
                 HashMap<String, Integer> peerScore = (HashMap<String, Integer>) score.dataMap().values().iterator().next().object();
-                for(String p : peerScore.keySet()){
-                    System.out.println(p + " ha fatto " + peerScore.get(p));
-                    if(peerScore.get(p)>max){
-                        max = peerScore.get(p);
-                        result = p;
+                HashMap<PeerAddress, String> peerInRoom = sudokuRoom.getGamePeers();
+                for(PeerAddress pa : peerInRoom.keySet()){
+                    System.out.println(peerInRoom.get(pa) + " ha fatto " + peerScore.get(peerInRoom.get(pa)));
+                    if(peerScore.get(peerInRoom.get(pa))>max){
+                        max = peerScore.get(peerInRoom.get(pa));
+                        result = peerInRoom.get(pa);
                     }
                     //peerScore.remove(p);
                 }
-                System.out.println("removeRoom = " + removeRoom(_game_name));
+                System.out.println("removeRoom = " + removeRoom(_game_name,sudokuRoom));
                 if(!result.equals(""))
                     return result;
                 else
@@ -377,17 +384,11 @@ public class SudokuGameImpl implements SudokuGame{
         return null;
     }
 
-    public boolean removeRoom(String _game_name){
+    public boolean removeRoom(String _game_name, SudokuRoom sudokuRoom){
         try {
-            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
-            futureGet.awaitUninterruptibly();
             FutureGet room = _dht.get(Number160.createHash("rooms")).start();
             room.awaitUninterruptibly();
-            if (futureGet.isSuccess())
-                if (futureGet.isEmpty()) return false;
             System.out.println("aaa");
-            SudokuRoom sudokuRoom;
-            sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
             for (PeerAddress pa : gamePeers.keySet())
                 System.out.println("gamePeers - " + gamePeers.get(pa).getNickname());
