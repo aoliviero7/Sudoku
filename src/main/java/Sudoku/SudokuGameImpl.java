@@ -134,7 +134,8 @@ public class SudokuGameImpl implements SudokuGame{
                     return 0;
                 else if (sudokuRoom.insertNumber(_number, _i, _j)) {
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
-                    peerScore = (HashMap<String, Integer>) score.dataMap().values().iterator().next().object();
+                    if(!score.isEmpty())
+                        peerScore = (HashMap<String, Integer>) score.dataMap().values().iterator().next().object();
                     for (PeerAddress peerAddress : gamePeers.keySet())
                         if (peerAddress.equals(peer.peerAddress())) {
                             Player p = gamePeers.get(peerAddress);
