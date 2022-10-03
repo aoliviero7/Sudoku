@@ -82,6 +82,9 @@ public class SudokuGameImpl implements SudokuGame{
                 SudokuRoom sudokuRoom;
                 sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
                 if (sudokuRoom.addPeer(_dht.peer().peerAddress(), _nickname)) {
+                    gamePeers = playersActive();
+                    gamePeers.put(_dht.peer().peerAddress(), new Player(_nickname));
+                    _dht.put(Number160.createHash("gamePeers")).data(new Data(gamePeers)).start().awaitUninterruptibly();
                     _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
                     String message = "[" + _game_name + "] " + _nickname + " joined.";
                     sendMessage(message, sudokuRoom);
@@ -191,7 +194,7 @@ public class SudokuGameImpl implements SudokuGame{
 
     public void addPlayer(Player player) throws IOException {
         gamePeers = playersActive();
-        gamePeers.put(peer.peerAddress(), player);
+        gamePeers.put(_dht.peer().peerAddress(), player);
         _dht.put(Number160.createHash("gamePeers")).data(new Data(gamePeers)).start().awaitUninterruptibly();
     }
 
