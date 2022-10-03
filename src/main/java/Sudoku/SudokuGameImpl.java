@@ -49,15 +49,18 @@ public class SudokuGameImpl implements SudokuGame{
 
     @Override
     public Integer[][] generateNewSudoku(String _game_name) {
-        if(rooms.contains(_game_name))
-            return null;
-        rooms.add(_game_name);
         try{
             FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
             futureGet.awaitUninterruptibly();
             FutureGet room = _dht.get(Number160.MAX_VALUE.createHash("rooms")).start();
             room.awaitUninterruptibly();
             if (futureGet.isSuccess() && futureGet.isEmpty()) {
+                if(room.isSuccess() && !room.isEmpty()){
+                    rooms = (ArrayList<String>) room.dataMap().values().iterator().next().object();
+                    if(rooms.contains(_game_name))
+                        return null;
+                } 
+                rooms.add(_game_name);
                 SudokuRoom sudokuRoom = new SudokuRoom(_game_name);
                 _dht.put(Number160.createHash(_game_name)).data(new Data(sudokuRoom)).start().awaitUninterruptibly();
                 _dht.put(Number160.createHash("rooms")).data(new Data(rooms)).start().awaitUninterruptibly();
@@ -112,7 +115,7 @@ public class SudokuGameImpl implements SudokuGame{
 
     @Override 
     /*
-        return: - number, if it's correctly placed
+        return: - 1, if the number it's correctly placed
                 - 0, if the number has already been entered
                 - -1, if the number is wrong
                 - 10, if the number makes you complete the game 
@@ -150,7 +153,7 @@ public class SudokuGameImpl implements SudokuGame{
                         return 10;
                     }
                     else {
-                        return _number;
+                        return 1;
                     }
                 } else { 
                     for (PeerAddress peerAddress : gamePeers.keySet())

@@ -189,7 +189,7 @@ public class Game {
                             System.out.println("Input wrong. Insert a number between 0 and 8.");
                     }
                     int result = sudokuGameImpl.placeNumber(_game_name, row, column, number);
-                    if(result == number)
+                    if(result == 1)
                         System.out.println("[" + _game_name + "] Number: " + number + " inserted successfully in position: (" + row + "," + column + ").");
                     else if(result == 0)
                         System.out.println("[" + _game_name + "] Number: " + number + " has already been entered in position: (" + row + "," + column + ").");
