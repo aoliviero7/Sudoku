@@ -365,15 +365,14 @@ public class SudokuGameImpl implements SudokuGame{
                     }
                     //peerScore.remove(p);
                     if (sudokuRoom.removePeer(_dht.peer().peerAddress(), p)) {
-                        for (PeerAddress peerAddress : gamePeers.keySet())
-                            if (peerAddress.equals(peer.peerAddress())) {
-                                Player player = gamePeers.get(peerAddress);
-                                player.setScore(0);
-                                gamePeers.put(peerAddress, player);
-                                sudokuRoom.getPeerScore().put(player.getNickname(), 0);
-                                peerScore.put(player.getNickname(), 0);
-                                _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
-                            }
+                        for (PeerAddress peerAddress : gamePeers.keySet()){
+                            Player player = gamePeers.get(peerAddress);
+                            player.setScore(0);
+                            gamePeers.put(peerAddress, player);
+                            sudokuRoom.getPeerScore().put(player.getNickname(), 0);
+                            peerScore.put(player.getNickname(), 0);
+                            _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
+                        }
                         _dht.peer().announceShutdown().start().awaitUninterruptibly();
                     }
                 }
