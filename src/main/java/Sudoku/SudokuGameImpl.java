@@ -347,36 +347,20 @@ public class SudokuGameImpl implements SudokuGame{
         try {
             FutureGet score = _dht.get(Number160.createHash("peerScore")).start();
             score.awaitUninterruptibly();
-            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
-            futureGet.awaitUninterruptibly();
-            if (futureGet.isSuccess())
-                if (futureGet.isEmpty()) return null;
-            SudokuRoom sudokuRoom;
-            sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             if(score.isEmpty()) return null;
             if (score.isSuccess()) {
                 if(score.isEmpty())
                     return null;
                 HashMap<String, Integer> peerScore = (HashMap<String, Integer>) score.dataMap().values().iterator().next().object();
                 for(String p : peerScore.keySet()){
+                    System.out.println(p + " ha fatto " + peerScore.get(p));
                     if(peerScore.get(p)>max){
                         max = peerScore.get(p);
                         result = p;
                     }
                     //peerScore.remove(p);
-                    if (sudokuRoom.removePeer(_dht.peer().peerAddress(), p)) {
-                        for (PeerAddress peerAddress : gamePeers.keySet()){
-                            Player player = gamePeers.get(peerAddress);
-                            player.setScore(0);
-                            gamePeers.put(peerAddress, player);
-                            sudokuRoom.getPeerScore().put(player.getNickname(), 0);
-                            peerScore.put(player.getNickname(), 0);
-                            _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
-                        }
-                        _dht.peer().announceShutdown().start().awaitUninterruptibly();
-                    }
                 }
-                System.out.println(result + " ha fatto " + max);
+                removeRoom(_game_name);
                 if(!result.equals(""))
                     return result;
                 else
@@ -386,5 +370,37 @@ public class SudokuGameImpl implements SudokuGame{
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean removeRoom(String _game_name){
+        try {
+            FutureGet futureGet = _dht.get(Number160.createHash(_game_name)).start();
+            futureGet.awaitUninterruptibly();
+            FutureGet room = _dht.get(Number160.createHash("rooms")).start();
+            room.awaitUninterruptibly();
+            if (futureGet.isSuccess())
+                if (futureGet.isEmpty()) return false;
+            SudokuRoom sudokuRoom;
+            sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
+            HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
+            for (PeerAddress peerAddress : peers.keySet()){
+                Player player = gamePeers.get(peerAddress);
+                player.setScore(0);
+                gamePeers.put(peerAddress, player);
+                peerScore.put(player.getNickname(), 0);
+                _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
+                _dht.put(Number160.createHash("gamePeers")).data(new Data(gamePeers)).start().awaitUninterruptibly();
+            }
+            if(!room.isSuccess())
+                return false;
+            ArrayList<String> rooms = (ArrayList<String>) room.dataMap().values().iterator().next().object();
+            rooms.remove(_game_name);
+            _dht.put(Number160.createHash("rooms")).data(new Data(rooms)).start().awaitUninterruptibly();
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return false;
     }
 }
