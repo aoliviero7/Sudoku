@@ -386,6 +386,10 @@ public class SudokuGameImpl implements SudokuGame{
             SudokuRoom sudokuRoom;
             sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
+            for (PeerAddress pa : gamePeers.keySet())
+                System.out.println("gamePeers - " + gamePeers.get(pa));
+            for (PeerAddress pa : peers.keySet())
+                System.out.println("peers - " + peers.get(pa));
             for (PeerAddress peerAddress : peers.keySet()){
                 System.out.println("for " + peers.get(peerAddress));
                 Player player = gamePeers.get(peerAddress);
