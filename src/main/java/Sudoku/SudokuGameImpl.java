@@ -358,9 +358,9 @@ public class SudokuGameImpl implements SudokuGame{
                         max = peerScore.get(p);
                         result = p;
                     }
-                    //peerScore.remove(p);
+                    peerScore.remove(p);
                 }
-                removeRoom(_game_name);
+                System.out.println("removeRoom = " + removeRoom(_game_name));
                 if(!result.equals(""))
                     return result;
                 else
@@ -394,7 +394,7 @@ public class SudokuGameImpl implements SudokuGame{
             if(!room.isSuccess())
                 return false;
             ArrayList<String> rooms = (ArrayList<String>) room.dataMap().values().iterator().next().object();
-            rooms.remove(_game_name);
+            System.out.println("rooms.remove = " + rooms.remove(_game_name));
             _dht.put(Number160.createHash("rooms")).data(new Data(rooms)).start().awaitUninterruptibly();
             
         } catch (Exception e) {
