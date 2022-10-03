@@ -62,13 +62,13 @@ public class Game {
             printMenu();
             Scanner scanner= new Scanner(System.in);
             int input = 0;
-            while(input < 1 || input >7){
+            while(input < 1 || input >6){
                 while(!scanner.hasNextInt()){
                     System.out.println("Input wrong. You can insert only a number.");
                     scanner.next();                
                 }
                 input=scanner.nextInt();
-                if(input < 1 || input >7)
+                if(input < 1 || input >6)
                     System.out.println("Input wrong. Insert a number between 1 and 6.");
             }
             switch(input){
@@ -218,7 +218,6 @@ public class Game {
                     }
                     System.out.println("An error occurred while exiting the game.");
                     break;
-                case 7: break;
                 default: break;
             }
         }

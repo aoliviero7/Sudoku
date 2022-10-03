@@ -365,8 +365,8 @@ public class SudokuGameImpl implements SudokuGame{
                 HashMap<String, Integer> peerScore = (HashMap<String, Integer>) score.dataMap().values().iterator().next().object();
                 HashMap<PeerAddress, String> peerInRoom = sudokuRoom.getGamePeers();
                 for(PeerAddress pa : peerInRoom.keySet()){
-                    System.out.println(peerInRoom.get(pa) + " ha fatto " + peerScore.get(peerInRoom.get(pa)));
-                    if(peerScore.get(peerInRoom.get(pa))>max){
+                    //System.out.println(peerInRoom.get(pa) + " ha fatto " + peerScore.get(peerInRoom.get(pa)));
+                    if(peerScore.get(peerInRoom.get(pa)) != null && peerScore.get(peerInRoom.get(pa))>=max){
                         max = peerScore.get(peerInRoom.get(pa));
                         result = peerInRoom.get(pa);
                     }
