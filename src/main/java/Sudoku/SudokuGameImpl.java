@@ -374,6 +374,7 @@ public class SudokuGameImpl implements SudokuGame{
                         _dht.peer().announceShutdown().start().awaitUninterruptibly();
                     }
                 }
+                System.out.println(result + " ha fatto " + max);
                 if(!result.equals(""))
                     return result;
                 else
