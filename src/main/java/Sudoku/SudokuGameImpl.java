@@ -380,6 +380,7 @@ public class SudokuGameImpl implements SudokuGame{
             room.awaitUninterruptibly();
             if (futureGet.isSuccess())
                 if (futureGet.isEmpty()) return false;
+                System.out.println("aaa");
             SudokuRoom sudokuRoom;
             sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
@@ -391,6 +392,7 @@ public class SudokuGameImpl implements SudokuGame{
                 _dht.put(Number160.createHash("peerScore")).data(new Data(peerScore)).start().awaitUninterruptibly();
                 _dht.put(Number160.createHash("gamePeers")).data(new Data(gamePeers)).start().awaitUninterruptibly();
             }
+            System.out.println("bbb");
             if(!room.isSuccess())
                 return false;
             ArrayList<String> rooms = (ArrayList<String>) room.dataMap().values().iterator().next().object();
