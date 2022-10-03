@@ -360,7 +360,7 @@ public class SudokuGameImpl implements SudokuGame{
                         max = peerScore.get(p);
                         result = p;
                     }
-                    peerScore.remove(p);
+                    //peerScore.remove(p);
                 }
                 System.out.println("removeRoom = " + removeRoom(_game_name));
                 if(!result.equals(""))
