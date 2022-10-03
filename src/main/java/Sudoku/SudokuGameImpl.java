@@ -189,6 +189,7 @@ public class SudokuGameImpl implements SudokuGame{
     }
 
     public void addPlayer(Player player) throws IOException {
+        gamePeers = playersActive();
         gamePeers.put(peer.peerAddress(), player);
         _dht.put(Number160.createHash("gamePeers")).data(new Data(gamePeers)).start().awaitUninterruptibly();
     }
@@ -385,6 +386,7 @@ public class SudokuGameImpl implements SudokuGame{
             sudokuRoom = (SudokuRoom) futureGet.dataMap().values().iterator().next().object();
             HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
             for (PeerAddress peerAddress : peers.keySet()){
+                System.out.println("for");
                 Player player = gamePeers.get(peerAddress);
                 player.setScore(0);
                 gamePeers.put(peerAddress, player);
