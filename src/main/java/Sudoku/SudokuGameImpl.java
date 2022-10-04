@@ -152,7 +152,7 @@ public class SudokuGameImpl implements SudokuGame{
                         }
                     if (sudokuRoom.checkSudoku()) {
                         String winner = getWinner(_game_name);
-                        String message = "[" + _game_name + "] Congratulation " + winner + ", you win!";
+                        String message = "[" + _game_name + "] Game is over. Congratulation " + winner + ", you win!";
                         sendMessage(message, sudokuRoom);
                         sendMessage(MessageListener.END_GAME, sudokuRoom);
                         return 10;
@@ -236,7 +236,9 @@ public class SudokuGameImpl implements SudokuGame{
         return new ArrayList<String>();
     }
 
-    public ArrayList<String> roomsActiveByPlayer(Player player) {
+    /* 
+     * 
+     * public ArrayList<String> roomsActiveByPlayer(Player player) {
         try {
             FutureGet rooms = _dht.get(Number160.createHash("rooms")).start();
             rooms.awaitUninterruptibly();
@@ -267,6 +269,7 @@ public class SudokuGameImpl implements SudokuGame{
         }
         return new ArrayList<String>();
     }
+    */
     
     public HashMap<PeerAddress, Player> playersActive() {
         try {
@@ -373,7 +376,7 @@ public class SudokuGameImpl implements SudokuGame{
                     }
                     //peerScore.remove(p);
                 }
-                System.out.println("removeRoom = " + removeRoom(_game_name,sudokuRoom));
+                //System.out.println("removeRoom = " + removeRoom(_game_name,sudokuRoom));
                 if(!result.equals(""))
                     return result;
                 else
