@@ -1,4 +1,6 @@
 package Sudoku;
+import javax.print.DocFlavor.STRING;
+
 import Interface.MessageListener;
 
 public class MessageListenerImpl implements MessageListener {
@@ -10,7 +12,11 @@ public class MessageListenerImpl implements MessageListener {
     }
 
     public Object parseMessage(Object obj){
-        System.out.printf("\n\n["+peerID+"] (Direct Message Received) "+obj+"\n\n");
+        String msg = (String) obj;
+        if (msg.equals(END_GAME))
+            System.exit(0);
+        else
+            System.out.printf("\n\n["+peerID+"] (Direct Message Received) "+ msg +"\n\n");
         return "success";
     }
 }

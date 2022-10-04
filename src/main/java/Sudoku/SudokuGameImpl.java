@@ -154,6 +154,7 @@ public class SudokuGameImpl implements SudokuGame{
                         String winner = getWinner(_game_name);
                         String message = "[" + _game_name + "] Congratulation " + winner + ", you win!";
                         sendMessage(message, sudokuRoom);
+                        sendMessage(MessageListener.END_GAME, sudokuRoom);
                         return 10;
                     }
                     else {
