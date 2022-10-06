@@ -11,7 +11,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class Sudoku implements Serializable{
-    final static String EXECUTION_TYPE = "TEST";
+    public final static String EXECUTION_TYPE = "TEST";
 
     private String name;
     private Integer[][] rawSudoku;
@@ -45,7 +45,7 @@ public class Sudoku implements Serializable{
         if(EXECUTION_TYPE.equals("TEST"))       //Esecuzione test
             n = rand.nextInt(1);
         else                                             //Normale esecuzione
-        n = rand.nextInt(27);
+        n = rand.nextInt(26) + 1;
 
         readFromJSON(n, "SolvedSudoku", solvedSudoku);
         readFromJSON(n, "RawSudoku", rawSudoku);

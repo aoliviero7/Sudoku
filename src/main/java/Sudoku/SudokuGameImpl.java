@@ -376,7 +376,7 @@ public class SudokuGameImpl implements SudokuGame{
                     }
                     //peerScore.remove(p);
                 }
-                System.out.println("removeRoom = " + removeRoom(_game_name,sudokuRoom));
+                //System.out.println("removeRoom = " + removeRoom(_game_name,sudokuRoom));
                 if(!result.equals(""))
                     return result;
                 else
