@@ -39,16 +39,18 @@ public class TestSudoku {
     }
 
 
-    //test creazione nuovi player e aggiunti alla sessione
     @Test
     public void testAddPlayer() throws IOException {
+
+        //test creazione nuovi player e aggiunti alla sessione
         peer0.addPlayer(player0);
         peer1.addPlayer(player1);
         peer2.addPlayer(player2);
         peer3.addPlayer(player3);
 
         HashMap<PeerAddress, Player> playersActive = peer0.playersActive();
-        assertEquals(4, playersActive.size());
+        assertNotEquals(0, playersActive.size());
+
     }
 
 
@@ -64,6 +66,8 @@ public class TestSudoku {
         Integer[][] sudoku1 = peer0.generateNewSudoku("testCreation");
         assertEquals(null, sudoku1);
 
+        peer0.exit(player0, "testCreation", true);
+
     }
 
 
@@ -74,7 +78,7 @@ public class TestSudoku {
         peer0.addPlayer(player0);
         peer1.addPlayer(player1);
         peer0.generateNewSudoku("testJoin");
-        boolean join = peer0.join("testJoin", player1.getNickname());
+        boolean join = peer1.join("testJoin", player1.getNickname());
         assertTrue(join);
 
 
@@ -82,6 +86,8 @@ public class TestSudoku {
         boolean joinFalse = peer0.join("testJoinFalse", player1.getNickname());
         assertFalse(joinFalse);
 
+        peer0.exit(player0, "testJoin", true);
+        peer1.exit(player1, "testJoin", true);
     }
 
 
@@ -94,6 +100,7 @@ public class TestSudoku {
         boolean addCreator = peer0.addCreator(player0, "gameAddCreator");
         assertTrue(addCreator);
 
+        peer0.exit(player0, "gameAddCreator", true);
     }
 
 
@@ -112,6 +119,8 @@ public class TestSudoku {
         Integer[][] sudoku1 = peer0.getSudoku("gameInesistente");
         assertEquals(null, sudoku1);
 
+        peer0.exit(player0, "gameAddCreator", true);
+
     }
 
 
@@ -119,11 +128,16 @@ public class TestSudoku {
     public void testRoomsActive() throws Exception {
 
         //test lista delle stanze attive
+        peer0.addPlayer(player0);
+        peer1.addPlayer(player1);
         peer0.generateNewSudoku("gameRoom0");
         peer1.generateNewSudoku("gameRoom1");
         ArrayList<String> rooms = peer0.roomsActive();
         assertNotEquals(0, rooms.size());
         assertEquals(rooms.size(), peer1.roomsActive().size());
+
+        peer0.exit(player0, "gameRoom0", true);
+        peer1.exit(player1, "gameRoom1", true);
         
     }
 
@@ -139,18 +153,6 @@ public class TestSudoku {
         assertEquals(playersActive.size(), peer1.playersActive().size());
 
     }
-
-    /*
-    //test exit
-    @Test
-    public void testExit() throws Exception {
-        Player player0 = new Player("player0");
-        peer0.generateNewSudoku("game0");
-        boolean exit = peer0.exit(player0, "game0", true);
-        assertTrue(exit);
-        peer0.getWinner("game0");
-    }
-     */
     
     
     @Test
@@ -184,6 +186,8 @@ public class TestSudoku {
         System.out.println("resultWin: " + resultWin);
         assertEquals(10, resultWin);
 
+        peer0.exit(player0, "gamePlaceNumber", true);
+
     }
 
 
@@ -204,5 +208,9 @@ public class TestSudoku {
         String winner = peer1.getWinner("gameGetWinner");
         assertEquals("player1", winner);
 
+        peer1.exit(player1, "gameGetWinner", true);
+        peer2.exit(player2, "gameGetWinner", true);
+
     }
+
 }
