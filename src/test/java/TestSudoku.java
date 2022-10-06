@@ -18,8 +18,13 @@ public class TestSudoku {
     private static SudokuGameImpl peer2;
     private static SudokuGameImpl peer3;
 
+    private static Player player0;
+    private static Player player1;
+    private static Player player2;
+    private static Player player3;
+
     @BeforeAll
-    public void setup() throws Exception {
+    static public void setup() throws Exception {
         peer0 = new SudokuGameImpl(0, "127.0.0.1", new MessageListenerImpl(0));
         peer1 = new SudokuGameImpl(1, "127.0.0.1", new MessageListenerImpl(1));
         peer2 = new SudokuGameImpl(2, "127.0.0.1", new MessageListenerImpl(2));
@@ -28,10 +33,10 @@ public class TestSudoku {
 
     @Test
     public void testAddPlayer() throws IOException {
-        Player player0 = new Player("player0");
-        Player player1 = new Player("player1");
-        Player player2 = new Player("player2");
-        Player player3 = new Player("player3");
+        player0 = new Player("player0");
+        player1 = new Player("player1");
+        player2 = new Player("player2");
+        player3 = new Player("player3");
 
         peer0.addPlayer(player0);
         peer1.addPlayer(player1);
@@ -41,8 +46,9 @@ public class TestSudoku {
 
     @Test
     public void testCreationSudoku() throws Exception {
-        Integer[][] sudoku0 = peer0.generateNewSudoku("game0");
+        Integer[][] sudoku0 = peer0.generateNewSudoku("game10");
         assertNotEquals(null, sudoku0);
+        peer0.getWinner("game0");
     }
 
     @Test
@@ -52,6 +58,7 @@ public class TestSudoku {
         peer0.generateNewSudoku("game0");
         boolean join = peer0.join("game0", player1.getNickname());
         assertTrue(join);
+        peer0.getWinner("game0");
     }
 
     @Test
@@ -61,6 +68,7 @@ public class TestSudoku {
         peer0.generateNewSudoku("game0");
         boolean addCreator = peer0.addCreator(player0, "game0");
         assertTrue(addCreator);
+        peer0.getWinner("game0");
     }
 
     @Test
@@ -68,6 +76,7 @@ public class TestSudoku {
         peer0.generateNewSudoku("game0");
         Integer[][] sudoku0 = peer0.getSudoku("game0");
         assertNotEquals(null, sudoku0);
+        peer0.getWinner("game0");
     }
 
     @Test
@@ -76,7 +85,9 @@ public class TestSudoku {
         peer1.generateNewSudoku("game1");
         ArrayList<String> rooms = peer0.roomsActive();
         assertNotEquals(0, rooms.size());
-        //assertEquals(rooms.size(), peer1.roomsActive().size());
+        assertEquals(rooms.size(), peer1.roomsActive().size());
+        peer0.getWinner("game0");
+        peer1.getWinner("game1");
     }
 
     @Test
@@ -100,7 +111,17 @@ public class TestSudoku {
         peer0.join("game0", player1.getNickname());
         boolean exit = peer0.exit(player1, "game0", true);
         assertTrue(exit);
+        peer0.getWinner("game0");
     }
 
-
+    /*
+     * @AfterAll
+    static void afterAll() {
+        peer0.exit(player0, );
+        peer1.exit(player1, );
+        peer2.exit(player2, );
+        peer3.exit(player3, );
+    }
+     */
+    
 }

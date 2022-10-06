@@ -3,7 +3,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.Random;
 
 import org.json.simple.JSONArray;
@@ -12,6 +11,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class Sudoku implements Serializable{
+    final static String EXECUTION_TYPE = "TEST";
+
     private String name;
     private Integer[][] rawSudoku;
     private Integer[][] solvedSudoku;
@@ -40,7 +41,11 @@ public class Sudoku implements Serializable{
 
     public void generateSudoku() throws Exception{
         Random rand = new Random();
-        int n = rand.nextInt(1); //aggiornare a 27
+        int n = 0;
+        if(EXECUTION_TYPE.equals("TEST"))       //Esecuzione test
+            n = rand.nextInt(1);
+        else                                             //Normale esecuzione
+        n = rand.nextInt(27);
 
         readFromJSON(n, "SolvedSudoku", solvedSudoku);
         readFromJSON(n, "RawSudoku", rawSudoku);

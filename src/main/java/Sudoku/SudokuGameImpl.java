@@ -183,7 +183,7 @@ public class SudokuGameImpl implements SudokuGame{
         return null;
     }
     
-    public void sendMessage(String message, SudokuRoom sudokuRoom) {
+    private void sendMessage(String message, SudokuRoom sudokuRoom) {
         for (PeerAddress peerAddress : sudokuRoom.getGamePeers().keySet()) {
             //System.out.println(peerAddress);
             if (_dht.peer().peerAddress() != peerAddress) {
@@ -376,7 +376,7 @@ public class SudokuGameImpl implements SudokuGame{
                     }
                     //peerScore.remove(p);
                 }
-                //System.out.println("removeRoom = " + removeRoom(_game_name,sudokuRoom));
+                System.out.println("removeRoom = " + removeRoom(_game_name,sudokuRoom));
                 if(!result.equals(""))
                     return result;
                 else
@@ -388,7 +388,7 @@ public class SudokuGameImpl implements SudokuGame{
         return null;
     }
 
-    public boolean removeRoom(String _game_name, SudokuRoom sudokuRoom){
+    private boolean removeRoom(String _game_name, SudokuRoom sudokuRoom){
         try {
             FutureGet room = _dht.get(Number160.createHash("rooms")).start();
             room.awaitUninterruptibly();
