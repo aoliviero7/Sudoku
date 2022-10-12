@@ -41,5 +41,45 @@ Oltre l'implementazione dell'interfaccia principale sono state create le seguent
 
 Le classi Player, Sudoku e SudokuRoom sono serializzabili in modo da poterne salvare lo stato.
 
+## Interfaccia
 
+All'avvio dell'app viene chiesto all'utente di inserire un nickname, successivamente è possibile scegliere le operazioni da eseguire tramite un menu testuale:
 
+![](images/menu.jpg)
+
+Le funzionalità 1 e 2 sono possibili solo se non si fa già parte di una stanza (avendola creata precedentemente oppure entrando in una esistente).
+Le funzionalità 3 e 4 sono possibili solo se si fa parte di una stanza (creandola oppure entrando in una esistente).
+La funzionalità 5 mostra all'utente le proprie informazioni quali: ID, nickname e score.
+
+## Docker
+
+Viene fornita un'applicazione di esempio utilizzando un Docker container, in esecuzione su una macchina locale. Si veda Dockerfile, per i dettagli di costruzione.
+
+Prima di tutto è possibile costruire il Docker container così:
+
+```docker build --no-cache -t sudoku .```
+
+#### Avviare il master peer 
+
+Successivamente è possibile avviare il peer master, in modalità interattiva (-i) e con due variabili di ambiente (-e):
+
+```docker run -i --name MASTER-PEER -e MASTERIP="127.0.0.1" -e ID=0 sudoku```
+
+, la variabile di ambiente MASTERIP è l'indirizzo IP del peer principale e la variabile di ambiente ID è l'ID univoco del peer. Si ricorda che bisogna eseguire il peer master usando l'ID=0.
+
+**Nota**: dopo il primo avvio, è possibile avviare il nodo master utilizzando il comando seguente:
+```docker start -i MASTER-PEER```.
+
+#### Avviare un peer generico
+
+All'avvio del master isogna controllare l'indirizzo IP del container:
+
+- Controllare il Docker <ID container>: ```docker ps```
+- Controllare l'indirizzo IP: ```docker inspect <container ID>```
+
+Ora puoi è possibile avviare i peer variando l'ID univoco:
+
+```docker run -i --name PEER-1 -e MASTERIP="172.17.0.2" -e ID=1 sudoku```
+
+**Nota**: dopo il primo avvio, è possibile avviare questo nodo peer utilizzando il comando seguente:
+```docker start -i PEER-1```.
