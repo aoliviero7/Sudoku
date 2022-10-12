@@ -53,13 +53,17 @@ La funzionalità 5 mostra all'utente le proprie informazioni quali: ID, nickname
 
 ## Docker
 
+**Nota**: Per poter eseguire il programma normalmente è necessario che il valore della variabile **EXECUTION_TYPE** non sia **"TEST"**, all'inizio della classe **Sudoku**, come nel seguente modo:
+  
+```public final static String EXECUTION_TYPE = " ";```
+
 Viene fornita un'applicazione di esempio utilizzando un Docker container, in esecuzione su una macchina locale. Si veda Dockerfile, per i dettagli di costruzione.
 
 Prima di tutto è possibile costruire il Docker container così:
 
 ```docker build --no-cache -t sudoku .```
 
-#### Avviare il master peer 
+### Avviare il master peer 
 
 Successivamente è possibile avviare il peer master, in modalità interattiva (-i) e con due variabili di ambiente (-e):
 
@@ -70,9 +74,9 @@ Successivamente è possibile avviare il peer master, in modalità interattiva (-
 **Nota**: dopo il primo avvio, è possibile avviare il nodo master utilizzando il comando seguente:
 ```docker start -i MASTER-PEER```.
 
-#### Avviare un peer generico
+### Avviare un peer generico
 
-All'avvio del master isogna controllare l'indirizzo IP del container:
+All'avvio del master bisogna controllare l'indirizzo IP del container:
 
 - Controllare il Docker <ID container>: ```docker ps```
 - Controllare l'indirizzo IP: ```docker inspect <container ID>```
@@ -83,3 +87,12 @@ Ora puoi è possibile avviare i peer variando l'ID univoco:
 
 **Nota**: dopo il primo avvio, è possibile avviare questo nodo peer utilizzando il comando seguente:
 ```docker start -i PEER-1```.
+
+  
+## Test
+  
+**Nota**: Per poter effettuare i test è necessario che il valore della variabile **EXECUTION_TYPE** sia **"TEST"**, all'inizio della classe **Sudoku**:
+  
+```public final static String EXECUTION_TYPE = "TEST";```
+  
+I test sono stati eseguiti con junit e sono state testate tutte le funzionalità descritte dalla classe **SudokuGameImpl**
