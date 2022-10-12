@@ -388,16 +388,13 @@ public class SudokuGameImpl implements SudokuGame{
         return null;
     }
 
+    /* 
     private boolean removeRoom(String _game_name, SudokuRoom sudokuRoom){
         try {
             FutureGet room = _dht.get(Number160.createHash("rooms")).start();
             room.awaitUninterruptibly();
             System.out.println("aaa");
             HashMap<PeerAddress, String> peers = sudokuRoom.getGamePeers();
-            /*for (PeerAddress pa : gamePeers.keySet())
-                System.out.println("gamePeers - " + gamePeers.get(pa).getNickname());
-            for (PeerAddress pa : peers.keySet())
-                System.out.println("peers - " + peers.get(pa));*/
             for (PeerAddress peerAddress : peers.keySet()){
                 System.out.println("for " + peers.get(peerAddress));
                 Player player = new Player(peers.get(peerAddress));
@@ -420,4 +417,5 @@ public class SudokuGameImpl implements SudokuGame{
         }
         return false;
     }
+    */
 }
