@@ -95,4 +95,18 @@ Ora puoi è possibile avviare i peer variando l'ID univoco:
   
 ```public final static String EXECUTION_TYPE = "TEST";```
   
-I test sono stati eseguiti con junit e sono state testate tutte le funzionalità descritte dalla classe **SudokuGameImpl**
+I test sono stati eseguiti con junit e sono state testate tutte le funzionalità descritte dalla classe **SudokuGameImpl** cercando di prevedere tutti i casi possibili. Il file di testo si trova in *src/test/java* ed è **TestSudoku**
+
+Inizialmente viene effettuata la creazione dei peer e dei player e successivamente vengono testati:
+
+- L'aggiunta dei player
+- La creazione del sudoku
+- Il join ad una partita
+- L'aggiunta del creatore
+- Il get del sudoku attuale
+- Le stanze attive
+- I giocatori attivi
+- Il piazzamento del numero
+- La conclusione della partita e la determinazione del vincitore
+
+![](images/test.jpg)
